@@ -1,9 +1,19 @@
-function App() {
+import { FC } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Container from "./pages/Container";
+import Home from "./pages/home/Home";
+
+const App: FC = () => {
   return (
-    <div className="tw-bg-red-500 tw-text-center">
-      AT FIRST WEOKING NO WAY MAN NO WAY pls work
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Container />}>
+          <Route path="home" element={<Home />} />
+          <Route path="*" element={<>NotFound</>} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
-}
+};
 
 export default App;
