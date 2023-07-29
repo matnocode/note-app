@@ -11,7 +11,7 @@ namespace NoteAppApi.Database
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Test>().ToTable("Tests"); // If you want to specify a different table name
+            modelBuilder.Entity<Test>().ToTable("Tests");
 
             base.OnModelCreating(modelBuilder);
         }
