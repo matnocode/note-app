@@ -1,6 +1,7 @@
 import { FC, useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import FolderItem from './components/FolderItem'
+import FileItem from './components/FileItem'
 import DirectoryLabel from './components/DirectoryLabel'
 
 const FileExplorer:FC = () =>
@@ -10,29 +11,50 @@ const FileExplorer:FC = () =>
   //console.log(searchParams.get("path"));
 
   //get from api
-  const mockData:Folder =
+  const data:Folder =
   {
     name:"main",
-    folders:[{name:"currentPlan"}],
-    items:[{name:"txtFile.txt"}]
+    folders:[
+      {name:"currentPlan",
+      folders:[
+        {name:'nextCurrentPlan'},
+        {name:"nextCurrentPlan1.1",
+        folders:[
+          {name:'nextCurrentPlan1.1.1'}
+        ]}
+      ]},
+      {name:"currentPlan2",
+      folders:[
+        {name:'nextCurrentPlan2'}
+      ]}
+    ],
+    files:[
+      {name:"txtFile.txt",content:"this is a very long content wow how could i write this on prompt damn i must be good at eberyrtihng,this is a very long content wow how could i write this on prompt damn i must be good at eberyrtihng,this is a very long content wow how could i write this on prompt damn i must be good at eberyrtihng"},
+      {name:"txtFile.txt",content:"this is a very long content wow how could i write this on prompt damn i must be good at eberyrtihng,this is a very long content wow how could i write this on prompt damn i must be good at eberyrtihng,this is a very long content wow how could i write this on prompt damn i must be good at eberyrtihng"},
+      {name:"txtFile.txt",content:"this is a very long content wow how could i write this on prompt damn i must be good at eberyrtihng,this is a very long content wow how could i write this on prompt damn i must be good at eberyrtihng,this is a very long content wow how could i write this on prompt damn i must be good at eberyrtihng"},
+      {name:"txtFile.txt",content:"this is a very long content wow how could i write this on prompt damn i must be good at eberyrtihng,this is a very long content wow how could i write this on prompt damn i must be good at eberyrtihng,this is a very long content wow how could i write this on prompt damn i must be good at eberyrtihng"},
+      {name:"txtFile.txt",content:"this is a very long content wow how could i write this on prompt damn i must be good at eberyrtihng,this is a very long content wow how could i write this on prompt damn i must be good at eberyrtihng,this is a very long content wow how could i write this on prompt damn i must be good at eberyrtihng"},
+      {name:"txtFile.txt",content:"this is a very long content wow how could i write this on prompt damn i must be good at eberyrtihng,this is a very long content wow how could i write this on prompt damn i must be good at eberyrtihng,this is a very long content wow how could i write this on prompt damn i must be good at eberyrtihng"},
+
+    ]
   }
 
   useEffect(() =>
   {
-    setCurrentFile(mockData);
+    setCurrentFile(data);
   }, [])
 
   useEffect(() =>
   {
     let path = searchParams.get('path');
-    if(!path) return;
+    if(!path) {setCurrentFile(data); return;}
     let pathArr = path.split('/');
 
     let folderName = pathArr[pathArr.length - 1];
 
     if(folderName == "main") return;
 
-    let cf = mockData;
+    let cf = data;
 
     for (let i = 0; i < pathArr.length; i++) {
       const fn = pathArr[i];
@@ -58,6 +80,9 @@ const FileExplorer:FC = () =>
       <div className="tw-flex tw-flex-col tw-gap-3">
         {currentFile?.folders?.map((folder,i) => <FolderItem key={`${folder.name}-${i}`} folder={folder}/>)}
       </div>
+      <div className="tw-mx-2 tw-mt-3 tw-gap-4 tw-grid tw-grid-cols-2 md:tw-grid-cols-4 lg:tw-grid-cols-6">
+        {currentFile?.files?.map((file,i) => <FileItem key={`${file.name}-${i}`} file={file}/>)}
+      </div>
     </div>
   )
 }
@@ -73,10 +98,10 @@ export interface Folder
     dateCreated?:string;
     dateModified?:string;
     folders?:Folder[];
-    items?:Item[];
+    files?:File[];
 }
 
-export interface Item
+export interface File
 {
   id?:number;
   dateCreated?:string;
