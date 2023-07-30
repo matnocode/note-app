@@ -1,15 +1,28 @@
 import { FC } from 'react'
 import { File } from '../FileExplorer'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 const FileItem:FC<{file:File}> = ({ file }) =>
 {
   const fileInfo = getFileInfo(file.name);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate()
 
   //from api will content if only its a txt file
 
+  const handleOnClick = () =>
+  {
+    let path = searchParams.get("path");
+    if(path)
+      navigate(`?path=${path}/${file.name}`)
+    else
+      navigate(`?path=${file.name}`)
+  }
 
   return (
-    <div className="tw-border hover:tw-bg-slate-50 hover:tw-cursor-pointer">
+    <div
+    onClick={handleOnClick}
+    className="tw-border hover:tw-bg-slate-50 hover:tw-cursor-pointer">
       <div className="tw-text-lg tw-text-center">
         {file.name}
       </div>
