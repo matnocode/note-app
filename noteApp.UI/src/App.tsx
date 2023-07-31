@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Toaster } from 'react-hot-toast';
+import { Toaster } from "react-hot-toast";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Container from "./pages/Container";
 import Home from "./pages/home/Home";
@@ -15,7 +15,7 @@ const App: FC = () => {
           <Route path="*" element={<>NotFound</>} />
         </Route>
       </Routes>
-      <Toaster/>
+      <Toaster />
     </BrowserRouter>
   );
 };
