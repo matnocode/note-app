@@ -20,10 +20,12 @@ namespace NoteAppApi.Database.Repositories
             context.Set<T>().Remove(entity);
             await context.SaveChangesAsync();
         }
-        public async Task AddAsync(T entity)
+        public async Task<T> AddAsync(T entity)
         {
-            await context.Set<T>().AddAsync(entity);
+            var added = await context.Set<T>().AddAsync(entity);
             await context.SaveChangesAsync();
+
+            return added.Entity;
         }
         public async Task Update(T entity)
         {

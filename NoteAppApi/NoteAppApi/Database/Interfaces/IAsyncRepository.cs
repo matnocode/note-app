@@ -6,7 +6,7 @@ namespace NoteAppApi.Database.Interfaces
     {
         Task<T?> GetAsync(int id);
         Task DeleteAsync(int id);
-        Task AddAsync(T entity);
+        Task<T> AddAsync(T entity);
         Task Update(T entity);
         Task<List<T>> GetAllAsync();
     }

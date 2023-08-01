@@ -1,6 +1,7 @@
 import { FC, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { loginUser, registerUser } from "../../../api/user";
 
 interface Error {
   message: string;
@@ -9,12 +10,13 @@ interface Error {
 
 const LoginForm: FC = () => {
   const [errors, setErrors] = useState<Error[]>([]);
+  const [register, setRegister] = useState(false);
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
 
-  const validate = () => {
+  const validate = async () => {
     let temp: Error[] = [];
 
     if (!userName || userName?.length == 0)
@@ -36,14 +38,38 @@ const LoginForm: FC = () => {
       setErrors(temp);
       return;
     }
-    //login api call here
     //create promise toast hook
-    toast.success("logged in!");
-    navigate("/files");
+
+    await handleLogin();
+  };
+
+  const handleLogin = async () => {
+    if (register)
+      toast.promise(registerUser(userName, password), {
+        loading: "loading",
+        error: "Something went wrong",
+        success: () => {
+          setRegister(false);
+          return "Successfully created an account! Now Log in!";
+        },
+      });
+    else
+      toast.promise(loginUser(userName, password), {
+        loading: "loading",
+        error: "Wrong credentials!",
+        success: (res) => {
+          res.json().then((x) => sessionStorage.setItem("userId", x));
+          navigate("/files");
+          return "Logged in!";
+        },
+      });
   };
 
   return (
     <div className="tw-mx-10 tw-mt-2">
+      <div className="tw-text-2xl tw-py-2">
+        {register ? "Register" : "Login"}
+      </div>
       <div className="tw-flex tw-flex-col tw-gap-3">
         <div>
           <label>Username</label>
@@ -102,7 +128,16 @@ const LoginForm: FC = () => {
             onClick={validate}
             className="tw-border tw-shadow tw-text-center tw-w-[80px] hover:tw-bg-yellow-200 active:tw-bg-yellow-300 tw-bg-yellow-100"
           >
-            Login
+            {register ? "Register" : "Login"}
+          </button>
+        </div>
+        <div className="tw-mt-6 tw-flex tw-flex-col tw-gap-3">
+          <div>{!register ? "Dont have an account?" : "Switch to login"}</div>
+          <button
+            className="tw-border tw-shadow tw-text-center tw-w-[80px] hover:tw-bg-yellow-200 active:tw-bg-yellow-300 tw-bg-yellow-100"
+            onClick={() => setRegister((prev) => !prev)}
+          >
+            {!register ? "Register" : "Login"}
           </button>
         </div>
       </div>

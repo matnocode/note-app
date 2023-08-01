@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NoteAppApi.Database;
 
@@ -11,9 +12,11 @@ using NoteAppApi.Database;
 namespace NoteAppApi.Migrations
 {
     [DbContext(typeof(NoteAppDbContext))]
-    partial class NoteAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230731190604_AddedFileAndFolder")]
+    partial class AddedFileAndFolder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -79,32 +82,6 @@ namespace NoteAppApi.Migrations
                     b.ToTable("Folders");
                 });
 
-            modelBuilder.Entity("NoteAppApi.Database.Entities.User", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("FolderId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FolderId");
-
-                    b.ToTable("Users");
-                });
-
             modelBuilder.Entity("NoteAppApi.Database.Entities.File", b =>
                 {
                     b.HasOne("NoteAppApi.Database.Entities.Folder", null)
@@ -117,17 +94,6 @@ namespace NoteAppApi.Migrations
                     b.HasOne("NoteAppApi.Database.Entities.Folder", null)
                         .WithMany("Folders")
                         .HasForeignKey("FolderId");
-                });
-
-            modelBuilder.Entity("NoteAppApi.Database.Entities.User", b =>
-                {
-                    b.HasOne("NoteAppApi.Database.Entities.Folder", "Folder")
-                        .WithMany()
-                        .HasForeignKey("FolderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Folder");
                 });
 
             modelBuilder.Entity("NoteAppApi.Database.Entities.Folder", b =>

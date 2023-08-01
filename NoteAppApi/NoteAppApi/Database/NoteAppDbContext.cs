@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NoteAppApi.Database.Entities;
+using File = NoteAppApi.Database.Entities.File;
 
 namespace NoteAppApi.Database
 {
@@ -11,11 +12,11 @@ namespace NoteAppApi.Database
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Test>().ToTable("Tests");
-
             base.OnModelCreating(modelBuilder);
         }
 
-        public DbSet<Test> Tests;
+        public DbSet<Folder> Folders { get; set; }
+        public DbSet<File> Files { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }
