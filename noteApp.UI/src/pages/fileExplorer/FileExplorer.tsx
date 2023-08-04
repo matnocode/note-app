@@ -72,7 +72,11 @@ const FileExplorer: FC = () => {
           <FolderControls refetch={() => refetch()} />
           <div className="tw-flex tw-flex-col tw-gap-3">
             {currentFolder?.folders?.map((folder, i) => (
-              <FolderItem key={`${folder.name}-${i}`} folder={folder} />
+              <FolderItem
+                key={`${folder.name}-${i}`}
+                folder={folder}
+                refetch={() => refetch()}
+              />
             ))}
           </div>
           <div className="tw-mx-2 tw-mt-3 tw-gap-4 tw-grid tw-grid-cols-2 md:tw-grid-cols-4 lg:tw-grid-cols-6">

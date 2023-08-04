@@ -24,10 +24,6 @@ const FileItem: FC<{ file: File; refetch: () => void }> = ({
     else navigate(`?path=${file.name}`);
   };
 
-  const handleDeleteClick = () => {
-    setShowModal(true);
-  };
-
   const deleteFileConfirm = () => {
     toast.promise(
       deleteFile(`${searchParams.get("path")}/${file.name}`, userId ?? "-1"),
@@ -52,7 +48,7 @@ const FileItem: FC<{ file: File; refetch: () => void }> = ({
           <div className="tw-text-lg tw-text-center">{file.name}</div>
           <button
             className="tw-bg-red-200 hover:tw-bg-red-500 tw-text-white tw-font-bold tw-px-2 tw-rounded-lg"
-            onClick={handleDeleteClick}
+            onClick={() => setShowModal(true)}
           >
             X
           </button>
