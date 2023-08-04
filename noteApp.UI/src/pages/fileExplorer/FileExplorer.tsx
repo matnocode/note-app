@@ -1,5 +1,5 @@
 import { FC, useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import FolderItem from "./components/FolderItem";
 import FileItem from "./components/FileItem";
 import DirectoryLabel from "./components/DirectoryLabel";
@@ -13,6 +13,7 @@ const FileExplorer: FC = () => {
   const [currentFolder, setCurrentFolder] = useState<Folder>();
   const [currentFile, setCurrentFile] = useState<File>();
 
+  const location = useLocation();
   const path = useMemo(() => searchParams.get("path"), [searchParams]);
   const userId = useMemo(() => localStorage.getItem("userId"), [localStorage]);
 
@@ -27,6 +28,8 @@ const FileExplorer: FC = () => {
   }, [data]);
 
   useEffect(() => {
+    setCurrentFile(undefined);
+
     if (!data) return;
     if (!path) {
       setCurrentFile(undefined);
@@ -48,14 +51,13 @@ const FileExplorer: FC = () => {
       const fn = pathArr[i];
 
       let temp = cf?.folders?.find((x) => x.name == fn);
-      if (!temp) return;
+      if (!temp) continue;
 
       cf = temp;
     }
-
     if (isFile) setCurrentFile(cf?.files?.find((x) => x.name == folderName));
     else setCurrentFolder(cf);
-  }, [path, data]);
+  }, [location.search, data]);
 
   if (!data) return <>unauthorized</>;
 

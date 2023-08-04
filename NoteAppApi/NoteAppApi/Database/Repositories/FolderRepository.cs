@@ -23,7 +23,6 @@ namespace NoteAppApi.Database.Repositories
             if (folder != null)
             {
                 await LoadSubFoldersRecursive(folder);
-                await LoadSubFilesRecursive(folder);
             }
 
             return folder;
@@ -32,13 +31,6 @@ namespace NoteAppApi.Database.Repositories
         private async Task LoadSubFoldersRecursive(Folder folder)
         {
             await context.Entry(folder).Collection(f => f.Folders).LoadAsync();
-
-            foreach (var subFolder in folder.Folders)
-                await LoadSubFoldersRecursive(subFolder);
-        }
-
-        private async Task LoadSubFilesRecursive(Folder folder)
-        {
             await context.Entry(folder).Collection(f => f.Files).LoadAsync();
 
             foreach (var subFolder in folder.Folders)
