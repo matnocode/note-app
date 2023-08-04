@@ -2,6 +2,7 @@
 using NoteAppApi.Commands.Files.DeleteFile;
 using NoteAppApi.Commands.Files.SaveFileContent;
 using NoteAppApi.Commands.Folder.AddFolder;
+using NoteAppApi.Commands.Folder.DeleteFolder;
 using NoteAppApi.Commands.Folder.GetFolder;
 
 namespace NoteAppApi.Controllers
@@ -13,6 +14,9 @@ namespace NoteAppApi.Controllers
 
         [HttpGet]
         public async Task<ActionResult> AddFolder([FromQuery] AddFolderCommand command) => await SendMessage(command);
+
+        [HttpGet]
+        public async Task<ActionResult> DeleteFolder([FromQuery] DeleteFolderCommand command) => await SendMessage(command);
 
         [HttpGet]
         public async Task<ActionResult> AddFile([FromQuery] AddFileCommand command) => await SendMessage(command);

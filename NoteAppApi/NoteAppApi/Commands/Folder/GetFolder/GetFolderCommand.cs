@@ -1,5 +1,6 @@
 ﻿using Azure.Core;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 using NoteAppApi.Database.Entities;
 using NoteAppApi.Database.Interfaces;
 
@@ -36,14 +37,36 @@ namespace NoteAppApi.Commands.Folder.GetFolder
             Database.Entities.Folder? foundFolder = null;
             var folderName = pathArr?[^1];
 
+            if (folderName == null)
+                return null;
+
             if (fullPath == "Main")
                 return mainFolder;
 
-            foreach (var folder in mainFolder.Folders)
-                if (folder.Name == folderName)
-                    foundFolder = folder;
+            FindRecursively(mainFolder, folderName, fullPath, ref foundFolder);
 
             return foundFolder;
+        }
+
+        private static void FindRecursively(Database.Entities.Folder folder, string folderName, string fullPath, ref Database.Entities.Folder setFolder)
+        {
+            foreach (var f in folder.Folders)
+            {
+                if (!fullPath.Contains(f.Name))
+                    continue;
+
+                if (f.Name == folderName)
+                {
+                    setFolder = f;
+                    break;
+                }
+
+                if (f.Folders.Count > 0)
+                    FindRecursively(f, folderName, fullPath, ref setFolder);
+
+                if (setFolder != null)
+                    break;
+            }
         }
 
         public static Database.Entities.File? GetFileByPath(string fullPath, Database.Entities.Folder mainFolder)
@@ -66,12 +89,8 @@ namespace NoteAppApi.Commands.Folder.GetFolder
             }
 
             if (folderName != "Main")
-            {
-                foreach (var folder in mainFolder.Folders)
-                    if (folder.Name == folderName)
-                        foundFolder = folder;
-            }
-            else 
+                foundFolder = GetFolderByPath(folderName, mainFolder);
+            else
                 foundFolder = mainFolder;
 
             if (foundFolder == null) return null;
