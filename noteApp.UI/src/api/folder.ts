@@ -27,6 +27,10 @@ export const addFile = (path: string, userId: string, fileName: string) => {
   );
 };
 
+export const deleteFile = (path: string, userId: string) => {
+  return fetch(url + `api/folder/deleteFile?path=${path}&userId=${userId}`);
+};
+
 export const saveFileContent = (
   path: string,
   userId: string,

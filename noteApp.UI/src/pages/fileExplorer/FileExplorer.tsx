@@ -1,12 +1,13 @@
 import { FC, useEffect, useMemo, useState } from "react";
 import { useLocation, useSearchParams } from "react-router-dom";
-import FolderItem from "./components/FolderItem";
-import FileItem from "./components/FileItem";
+
 import DirectoryLabel from "./components/DirectoryLabel";
+import FileItem from "./components/FileItem";
 import FilePage from "../filePage/FilePage";
-import { useQuery } from "react-query";
-import { getFolder } from "../../api/folder";
 import FolderControls from "./components/FolderControls";
+import FolderItem from "./components/FolderItem";
+import { getFolder } from "../../api/folder";
+import { useQuery } from "react-query";
 
 const FileExplorer: FC = () => {
   const [searchParams] = useSearchParams();
@@ -76,7 +77,11 @@ const FileExplorer: FC = () => {
           </div>
           <div className="tw-mx-2 tw-mt-3 tw-gap-4 tw-grid tw-grid-cols-2 md:tw-grid-cols-4 lg:tw-grid-cols-6">
             {currentFolder?.files?.map((file, i) => (
-              <FileItem key={`${file.name}-${i}`} file={file} />
+              <FileItem
+                key={`${file.name}-${i}`}
+                file={file}
+                refetch={() => refetch()}
+              />
             ))}
           </div>
         </>

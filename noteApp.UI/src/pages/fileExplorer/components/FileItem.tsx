@@ -1,10 +1,19 @@
-import { FC } from "react";
-import { File } from "../FileExplorer";
+import { FC, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-const FileItem: FC<{ file: File }> = ({ file }) => {
+import { File } from "../FileExplorer";
+import Modal from "../../../common/Modal";
+import { deleteFile } from "../../../api/folder";
+import { toast } from "react-hot-toast";
+
+const FileItem: FC<{ file: File; refetch: () => void }> = ({
+  file,
+  refetch,
+}) => {
   // const fileInfo = getFileInfo(file.name);
   const [searchParams] = useSearchParams();
+  const [showModal, setShowModal] = useState(false);
+  const userId = useMemo(() => localStorage.getItem("userId"), [localStorage]);
   const navigate = useNavigate();
 
   //from api will content if only its a txt file
@@ -15,14 +24,61 @@ const FileItem: FC<{ file: File }> = ({ file }) => {
     else navigate(`?path=${file.name}`);
   };
 
+  const handleDeleteClick = () => {
+    setShowModal(true);
+  };
+
+  const deleteFileConfirm = () => {
+    toast.promise(
+      deleteFile(`${searchParams.get("path")}/${file.name}`, userId ?? "-1"),
+      {
+        error: (res) => {
+          return "Something went wrong! " + res;
+        },
+        loading: "Deleting ⌛...",
+        success: () => {
+          refetch();
+          setShowModal(false);
+          return "Deleted!";
+        },
+      }
+    );
+  };
+
   return (
-    <div
-      onClick={handleOnClick}
-      className="tw-border hover:tw-bg-slate-50 hover:tw-cursor-pointer"
-    >
-      <div className="tw-text-lg tw-text-center">{file.name}</div>
-      <div className="tw-shadow">{file.content?.substring(0, 97)}...</div>
-    </div>
+    <>
+      <div className="tw-border">
+        <div className="tw-flex tw-justify-between tw-mx-2 tw-shadow">
+          <div className="tw-text-lg tw-text-center">{file.name}</div>
+          <button
+            className="tw-bg-red-200 hover:tw-bg-red-500 tw-text-white tw-font-bold tw-px-2 tw-rounded-lg"
+            onClick={handleDeleteClick}
+          >
+            X
+          </button>
+        </div>
+        <div
+          className="hover:tw-opacity-75 hover:tw-cursor-pointer tw-min-h-[75%]"
+          onClick={handleOnClick}
+        >
+          {file.content?.substring(0, 97)}...
+        </div>
+      </div>
+      {showModal && (
+        <Modal
+          handleCloseClick={() => setShowModal(false)}
+          handleConfirmClick={() => deleteFileConfirm()}
+          title={
+            <div className="tw-text-md">
+              Are you sure you want to delete file
+              <span className="tw-font-bold"> {file.name}</span>
+            </div>
+          }
+          confirmText="Yes"
+          size="lg"
+        />
+      )}
+    </>
   );
 };
 
