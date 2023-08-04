@@ -10,7 +10,7 @@ const App: FC = () => {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Container />}>
-          <Route path="home" element={<Home />} />
+          <Route index element={<Home />} />
           <Route path="files" element={<FileExplorer />} />
           <Route path="*" element={<>NotFound</>} />
         </Route>

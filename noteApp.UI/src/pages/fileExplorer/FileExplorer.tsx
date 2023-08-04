@@ -81,7 +81,7 @@ const FileExplorer: FC = () => {
           </div>
         </>
       ) : (
-        <FilePage file={currentFile} />
+        <FilePage file={currentFile} refetch={() => refetch()} />
       )}
     </div>
   );

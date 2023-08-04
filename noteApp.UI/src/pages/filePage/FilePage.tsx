@@ -5,7 +5,10 @@ import { toast } from "react-hot-toast";
 import { saveFileContent } from "../../api/folder";
 import { useSearchParams } from "react-router-dom";
 
-const FilePage: FC<{ file: File }> = ({ file }) => {
+const FilePage: FC<{ file: File; refetch: () => void }> = ({
+  file,
+  refetch,
+}) => {
   const [content, setContent] = useState("");
   const userId = useMemo(() => localStorage.getItem("userId"), [localStorage]);
   const [searchParams] = useSearchParams();
@@ -23,6 +26,7 @@ const FilePage: FC<{ file: File }> = ({ file }) => {
       ),
       {
         success: () => {
+          refetch();
           return "Saved!";
         },
         error: "Something went wrong!",
