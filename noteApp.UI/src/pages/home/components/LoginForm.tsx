@@ -58,7 +58,10 @@ const LoginForm: FC = () => {
         loading: "loading",
         error: "Wrong credentials!",
         success: (res) => {
-          res.json().then((x) => sessionStorage.setItem("userId", x));
+          res.json().then((x) => {
+            localStorage.clear();
+            localStorage.setItem("userId", x);
+          });
           navigate("/files");
           return "Logged in!";
         },

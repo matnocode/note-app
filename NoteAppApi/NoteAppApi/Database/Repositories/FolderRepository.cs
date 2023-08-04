@@ -12,11 +12,13 @@ namespace NoteAppApi.Database.Repositories
 
         public async Task<Folder> GetByUserId(int userId)
         {
+            int folderId = (await context.Users.FindAsync(userId))?.FolderId ?? -1;
+
             var folder = await context.Folders
-                .Include(x => x.Folders)
-                .Include(x => x.Files)
-                .Where(x => x.Id == userId && x.Name == "Main")
-                .FirstAsync();
+               .Include(x => x.Folders)
+               .Include(x => x.Files)
+               .Where(x => x.Id == folderId && x.Name == "Main")
+               .FirstAsync();
 
             if (folder != null)
             {

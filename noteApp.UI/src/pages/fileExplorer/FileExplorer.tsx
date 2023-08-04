@@ -5,23 +5,16 @@ import FileItem from "./components/FileItem";
 import DirectoryLabel from "./components/DirectoryLabel";
 import FilePage from "../filePage/FilePage";
 import { useQuery } from "react-query";
-import { addFolder, getFolder } from "../../api/folder";
-import { toast } from "react-hot-toast";
+import { getFolder } from "../../api/folder";
+import FolderControls from "./components/FolderControls";
 
 const FileExplorer: FC = () => {
   const [searchParams] = useSearchParams();
-  const [errors, setErrors] = useState<any>();
   const [currentFolder, setCurrentFolder] = useState<Folder>();
-  const [currentFile, setCurrentFile] = useState<File | undefined>(undefined);
-  const [newFolderName, setNewFolderName] = useState<string | undefined>(
-    undefined
-  );
+  const [currentFile, setCurrentFile] = useState<File>();
 
   const path = useMemo(() => searchParams.get("path"), [searchParams]);
-  const userId = useMemo(
-    () => sessionStorage.getItem("userId"),
-    [sessionStorage]
-  );
+  const userId = useMemo(() => localStorage.getItem("userId"), [localStorage]);
 
   const { data, refetch } = useQuery(
     "getFolder",
@@ -34,13 +27,14 @@ const FileExplorer: FC = () => {
   }, [data]);
 
   useEffect(() => {
+    if (!data) return;
     if (!path) {
       setCurrentFile(undefined);
       setCurrentFolder(data);
       return;
     }
-    let pathArr = path.split("/");
 
+    let pathArr = path.split("/");
     let folderName = pathArr[pathArr.length - 1];
     let isFile = folderName?.split(".").length > 1;
 
@@ -48,7 +42,6 @@ const FileExplorer: FC = () => {
       setCurrentFile(data?.files?.find((x) => x.name == folderName));
       return;
     }
-
     let cf = data;
 
     for (let i = 0; i < pathArr.length; i++) {
@@ -62,67 +55,18 @@ const FileExplorer: FC = () => {
 
     if (isFile) setCurrentFile(cf?.files?.find((x) => x.name == folderName));
     else setCurrentFolder(cf);
-  }, [searchParams]);
+  }, [path, data]);
 
-  const handleAddFolderCommand = () => {
-    if (!newFolderName) {
-      setErrors({ folderRequired: "folder name is required!" });
-      return;
-    }
-
-    toast.promise(
-      addFolder(
-        searchParams.get("path") ?? "Main",
-        userId ?? "-1",
-        newFolderName ?? ""
-      ),
-      {
-        success: () => {
-          refetch();
-          setNewFolderName(undefined);
-          return "Created new Folder!";
-        },
-        error: "Something went wrong!",
-        loading: "Creating Folder",
-      }
-    );
-  };
-
-  //comes here like this files?path="folder1/folder1.1/folder1.1.1"
-  //then interate through and get matched last folder name folder item
+  if (!data) return <>unauthorized</>;
 
   return (
     <div className="tw-bg-white tw-pb-3">
-      {currentFile == undefined ? (
+      {currentFile === undefined ? (
         <>
           <div className="tw-p-2">
             <DirectoryLabel label={currentFolder?.name ?? ""} />
           </div>
-          <div className="tw-mx-2 tw-flex tw-flex-row tw-gap-3">
-            <div className="">
-              <input
-                value={newFolderName}
-                onChange={(val) => {
-                  setErrors(undefined);
-                  setNewFolderName(val.target.value);
-                }}
-                type="text"
-                className="tw-bg-red-100 focus:tw-outline-none tw-p-1 tw-shadow"
-                placeholder="new folder name"
-              />
-              {errors && errors.folderRequired && (
-                <div className="tw-text-xs tw-text-red-500 tw-p-x-2">
-                  {errors.folderRequired}
-                </div>
-              )}
-            </div>
-            <button
-              className="tw-border tw-px-4 hover:tw-bg-blue-200 tw-bg-blue-100 disabled:tw-bg-blue-50"
-              onClick={handleAddFolderCommand}
-            >
-              Create folder
-            </button>
-          </div>
+          <FolderControls refetch={() => refetch()} />
           <div className="tw-flex tw-flex-col tw-gap-3">
             {currentFolder?.folders?.map((folder, i) => (
               <FolderItem key={`${folder.name}-${i}`} folder={folder} />

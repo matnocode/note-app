@@ -3,7 +3,7 @@ import { File } from "../FileExplorer";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 const FileItem: FC<{ file: File }> = ({ file }) => {
-  const fileInfo = getFileInfo(file.name);
+  // const fileInfo = getFileInfo(file.name);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
@@ -28,22 +28,22 @@ const FileItem: FC<{ file: File }> = ({ file }) => {
 
 export default FileItem;
 
-const getFileInfo = (fileName: string) => {
-  if (!fileName) return;
-  let tmp = fileName.split(".");
-  if (tmp.length <= 1) return { name: tmp, fileType: "file" };
+// const getFileInfo = (fileName: string) => {
+//   if (!fileName) return;
+//   let tmp = fileName.split(".");
+//   if (tmp.length <= 1) return { name: tmp, fileType: "file" };
 
-  return {
-    name: tmp[0],
-    extention: tmp[1],
-    fileType: tmp[1] == "txt" ? "textFile" : "file",
-  } as FileInfo;
-};
+//   return {
+//     name: tmp[0],
+//     extention: tmp[1],
+//     fileType: tmp[1] == "txt" ? "textFile" : "file",
+//   } as FileInfo;
+// };
 
-interface FileInfo {
-  name: string;
-  extention?: string;
-  fileType: FileType;
-}
+// interface FileInfo {
+//   name: string;
+//   extention?: string;
+//   fileType: FileType;
+// }
 
-type FileType = "textFile" | "file";
+// type FileType = "textFile" | "file";
