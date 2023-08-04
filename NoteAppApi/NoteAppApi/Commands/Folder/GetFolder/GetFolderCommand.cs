@@ -1,5 +1,6 @@
 ﻿using Azure.Core;
 using MediatR;
+using NoteAppApi.Database.Entities;
 using NoteAppApi.Database.Interfaces;
 
 namespace NoteAppApi.Commands.Folder.GetFolder
@@ -35,11 +36,51 @@ namespace NoteAppApi.Commands.Folder.GetFolder
             Database.Entities.Folder? foundFolder = null;
             var folderName = pathArr?[^1];
 
+            if (fullPath == "Main")
+                return mainFolder;
+
             foreach (var folder in mainFolder.Folders)
                 if (folder.Name == folderName)
                     foundFolder = folder;
 
             return foundFolder;
+        }
+
+        public static Database.Entities.File? GetFileByPath(string fullPath, Database.Entities.Folder mainFolder)
+        {
+            var pathArr = fullPath.Split('/');
+            Database.Entities.Folder? foundFolder = null;
+            Database.Entities.File? foundFile = null;
+            string? folderName;
+            string? fileName;
+
+            try
+            {
+                folderName = pathArr[^2];
+                fileName = pathArr[^1];
+            }
+            catch
+            {
+                folderName = "Main";
+                fileName = fullPath;
+            }
+
+            if (folderName != "Main")
+            {
+                foreach (var folder in mainFolder.Folders)
+                    if (folder.Name == folderName)
+                        foundFolder = folder;
+            }
+            else 
+                foundFolder = mainFolder;
+
+            if (foundFolder == null) return null;
+
+            foreach (var file in foundFolder.Files)
+                if (file.Name == fileName)
+                    foundFile = file;
+
+            return foundFile;
         }
     }
 }
