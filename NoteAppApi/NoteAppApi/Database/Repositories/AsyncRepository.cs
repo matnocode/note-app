@@ -14,9 +14,8 @@ namespace NoteAppApi.Database.Repositories
 
         public async Task<T?> GetAsync(int id) => await context.Set<T>().FirstOrDefaultAsync(x => x.Id == id);
         public async Task<List<T>> GetAllAsync() => await context.Set<T>().ToListAsync();
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(T entity)
         {
-            var entity = await context.Set<T>().FirstAsync(x => x.Id == id);
             context.Set<T>().Remove(entity);
             await context.SaveChangesAsync();
         }
